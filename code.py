@@ -1,9 +1,29 @@
+# functions ---------------------------------------------------------------------------------------
+
+def min_to_sec(laptime):
+    # converts laptime format: from --'---.--- string type to seconds float type
+    minsec = laptime.split("'")
+    sec = round(int(minsec[0]) * 60 + float(minsec[1]), 3)
+    return sec
+
+def sec_to_min(sec):
+    # converts laptime format: from seconds float type to --'---.--- string type
+    min = 0
+    while sec >= 60:
+        sec -= 60
+        min += 1
+    sec = format(round(sec, 3), ".3f")
+    laptime = str(min) + "'" + str(sec).zfill(6)
+    return laptime
+
+# -------------------------------------------------------------------------------------------------
+
 def motogp_fpanalyser(filename):
     # filename MUST be taken from the pdf file from the MotoGP website 
     # e.g. https://resources.motogp.com/files/results/2022/INA/MotoGP/FP4/Analysis.pdf
     # this code will most likely no longer work if they change the pdf format in the future
 
-    # this section is *stolen* from stackoverflow
+    # this section is *stolen* from stackoverflow, pdf reading using pymupdf
     import fitz
 
     with fitz.open(filename) as doc:
@@ -28,28 +48,6 @@ def motogp_fpanalyser(filename):
     for rider in data:
         rider_lapt = re.findall("\d'\d\d.\d\d\d", rider) # all laptimes from each rider
         all_lapt.append(rider_lapt)
-
-
-    # functions ---------------------------------------------------------------------------------------
-
-    def min_to_sec(laptime):
-        # converts laptime format: from --'---.--- string type to seconds float type
-        minsec = laptime.split("'")
-        sec = round(int(minsec[0]) * 60 + float(minsec[1]), 3)
-        return sec
-
-    def sec_to_min(sec):
-        # converts laptime format: from seconds float type to --'---.--- string type
-        min = 0
-        while sec >= 60:
-            sec -= 60
-            min += 1
-        sec = format(round(sec, 3), ".3f")
-        laptime = str(min) + "'" + str(sec).zfill(6)
-        return laptime
-
-    # -------------------------------------------------------------------------------------------------
-
 
     fastest_lap = all_lapt[-1][0]
     fastest_lap_sec = min_to_sec(fastest_lap)
