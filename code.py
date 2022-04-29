@@ -23,13 +23,15 @@ def motogp_fpanalyser(filename):
     # e.g. https://resources.motogp.com/files/results/2022/INA/MotoGP/FP4/Analysis.pdf
     # this code will most likely no longer work if they change the pdf format in the future
 
-    # this section is *stolen* from stackoverflow, pdf reading using pymupdf
+    # this section is *stolen* from stackoverflow
     import fitz
 
     with fitz.open(filename) as doc:
         text = ""
         for page in doc:
             text += page.get_text()
+
+
 
     # laptime is of format INT ' INT INT . INT INT INT (single digit, without whitespace).
     # in regex: '''\d'\d\d.\d\d\d'''
@@ -49,7 +51,11 @@ def motogp_fpanalyser(filename):
         rider_lapt = re.findall("\d'\d\d.\d\d\d", rider) # all laptimes from each rider
         all_lapt.append(rider_lapt)
 
-    fastest_lap = all_lapt[-1][0]
+    try:
+        fastest_lap = all_lapt[-1][0]
+    except:
+        fastest_lap = all_lapt[-2][0]
+
     fastest_lap_sec = min_to_sec(fastest_lap)
     threshold = fastest_lap_sec * 1.03
 
@@ -89,10 +95,15 @@ def motogp_fpanalyser(filename):
     # put lists into dict and print outputs
     data = dict(zip(check_dupl, lapt_summary))
     sorted_data = dict(sorted(data.items(), key=lambda item: item[1]))
-    count = 1
-    for i in sorted_data:
-        print(str(count) + ": " + str(i))
-        print("average laptime: " + sec_to_min(sorted_data[i][0]))
-        print("best laptime: " + sec_to_min(sorted_data[i][1]) + "\n")
-        count += 1
+    # every method is not perfect, and so if somehow a manufacturer's name has made it 
+    # into the final list, it will be removed in a brute-force way
+    teams_list = ["Team SUZUKI", "Bull KTM", "Yamaha RNF", "Honda CASTROL", "Honda IDEMITSU"]
+    with open(filename[:-4] + ".txt", "w") as f:
+        count = 1
+        for i in sorted_data:
+            if i not in teams_list:
+                f.write(str(count) + ": " + str(i) + "\n")
+                f.write("average laptime: " + sec_to_min(sorted_data[i][0]) + "\n")
+                f.write("best laptime: " + sec_to_min(sorted_data[i][1]) + "\n\n")
+                count += 1
     return
