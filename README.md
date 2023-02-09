@@ -1,6 +1,6 @@
-# MotoGP-Free-Practice-Analyser
-A python script to automatically calculate the average and best time from each rider. Useful for FP4 particularly, to predict who has the best race pace.
+# MotoGP Free Practice Analysis
+FP4 in MotoGP is usually when riders practice their race simulation. This project aims to find the correlation between the average FP4 laptimes for each rider and their race performance.
 
-The code takes a pdf file as input and prints its calculation result as output. The pdf file is taken from the official MotoGP website, e.g. https://resources.motogp.com/files/results/2022/AME/MotoGP/FP4/Analysis.pdf.
+The timeline is a 10-year period between 2013 and 2022. The data is taken from the pdf files from the official MotoGP website, e.g. https://resources.motogp.com/files/results/2022/AME/MotoGP/FP4/Analysis.pdf.
 
 Note that this might no longer work if MotoGP decides to change their pdf format in the future.
