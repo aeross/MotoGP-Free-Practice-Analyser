@@ -129,6 +129,9 @@ def merge_fp_and_race(fp, race):
     fp = fp[fp["Number"].isin(race["Number"])]
     fp = fp[fp["Number"].notna()].reset_index()
 
+    race = race[race["Number"].isin(fp["Number"])]
+    race = race[race["Number"].notna()].reset_index()
+
     final = pd.DataFrame({"fp": fp["Number"], "race": race["Number"]})
     return final
 
