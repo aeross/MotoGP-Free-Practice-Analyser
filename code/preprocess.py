@@ -133,6 +133,22 @@ def merge_fp_and_race(fp, race):
     race = race[race["Number"].notna()].reset_index()
 
     final = pd.DataFrame({"fp": fp["Number"], "race": race["Number"]})
+    final.rename(columns={"fp": "number"}, inplace=True)
+    final.set_index(keys="number", drop=False, inplace=True)
+    fp_pos = list(range(1, final.shape[0]+1))
+    final["fp"] = fp_pos
+
+    race_pos = []
+    for i in range(final.shape[0]):
+        race_result = final.iat[i, 1]
+        for j in range(final.shape[0]):
+            fp_result = final.iat[j, 0]
+            if fp_result == race_result:
+                race_pos.append(j+1)
+
+    final["race"] = race_pos
+    final.drop(columns=["number"], inplace=True)
+    final
     return final
 
 # -------------------------------------------------------------------------------------------------
@@ -162,7 +178,7 @@ for i in tqdm(range(1, len(data))):  # start at 1 to skip gitkeep
         fp = prep_fp(f"../Data/FP/{data[i]}-FP4.pdf")
     except:
         # we'll just print the failed pdf scraping, and discard the data for future uses
-        print("fp" + data[i])
+        print("\nfp" + data[i])
         continue
-    merge_fp_and_race(fp, race).to_csv(f"../Data/{data[i][:FILENAME_LEN]}.csv")
+    merge_fp_and_race(fp, race).to_csv(f"../Data/Curated/{data[i][:FILENAME_LEN]}.csv")
 
